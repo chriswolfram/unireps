@@ -1,0 +1,11 @@
+torch
+transformers
+sentencepiece
+protobuf
+accelerate
+huggingface_hub
+tqdm
+
+datasets
+matplotlib
+jupyter

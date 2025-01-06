@@ -16,4 +16,4 @@ UNIREPS_OUTPUTS="/net/scratch2/chriswolfram/unireps/outputs"
 
 UNIREPS_PYTHON="$UNIREPS_DIR/.venv/bin/python"
 
-UNIREPS_PYTHON $UNIREPS_DIR/download_models.py $UNIREPS_DIR/models.txt $UNIREPS_HF_CACHE
+$UNIREPS_PYTHON $UNIREPS_DIR/download_models.py $UNIREPS_DIR/models.txt $UNIREPS_HF_CACHE

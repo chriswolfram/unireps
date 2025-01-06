@@ -8,6 +8,7 @@ def prepare_imdb(cache_dir, output_dir):
     if os.path.isdir(output_path):
         return
     
+    # TODO: Remove unused columns?
     imdb = datasets.load_dataset('stanfordnlp/imdb', split='train[:4096]', cache_dir=cache_dir)
     imdb.save_to_disk(os.path.join(output_dir, 'imdb'))
 

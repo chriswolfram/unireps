@@ -41,38 +41,62 @@ if __name__ == "__main__":
     model_list = sys.argv[1]
     cache_dir = sys.argv[2]
     dataset_list = sys.argv[3]
-    output_dir = sys.argv[4]
+    dataset_dir = sys.argv[4]
+    output_dir = sys.argv[5]
     
-    # Authenticate for HF
+    # Authenticate for HF (just in case)
     huggingface_hub.login(new_session=False)
 
     # Disable caching because we don't need it and it causes performance problems with big models
     datasets.disable_caching()
 
-    for model_name in []:
+    # Get models
+    model_names = []
+    with open(model_list) as f:
+        for model_name_nl in f:
+            model_name = model_name_nl.rstrip()
+            model_names.append(model_name)
+
+    # Get datasets
+    dataset_names = []
+    with open(dataset_list) as f:
+        for dataset_name_nl in f:
+            dataset_name = dataset_name_nl.rstrip()
+            dataset_names.append(dataset_name)
+
+    print('Models:')
+    for m in model_names:
+        print("- {}".format(m))
+
+    print('Datasets:')
+    for d in dataset_names:
+        print("- {}".format(d))
+
+    for model_name in model_names:
 
         # Setup the scope for the model and tokenizer. They will only be loaded if they are needed
         tokenizer = None
         model = None
 
-        for dataset_name in []:
+        for dataset_name in dataset_names:
 
-            # TODO: Write this
-            output_path = os.path.join(output_dir, '...')
+            output_path = os.path.join(output_dir, '{}---{}'.format(model_name.replace('/', '__'), dataset_name))
+            print('Generating:\t{}'.format(output_path))
 
             if os.path.isdir(output_path):
+                print('Output already exists (skipping):\t{}'.format(output_path))
                 continue
 
             # Load the model and the tokenizer if needed
             if tokenizer is None and model is None:
+                print('Loading model:\t{}'.format(model_name))
                 tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, device_map='auto', cache_dir=cache_dir)
                 model = transformers.AutoModelForCausalLM.from_pretrained(model_name, torch_dtype='auto', device_map='auto', cache_dir=cache_dir)
 
             # Load the dataset
-            # trust_remote_code=False
-            dataset = datasets.load_dataset(dataset_name, split='train', streaming=True, cache_dir=cache_dir)
+            dataset = datasets.load_from_disk(os.path.join(dataset_dir, dataset_name))
 
             # Generate embeddings
             embeddings = embeddings_dataset(dataset, model, tokenizer)
 
-            embeddings.save_to_disk(os.)
+            embeddings.save_to_disk(output_path)

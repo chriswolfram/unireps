@@ -9,7 +9,7 @@ import huggingface_hub
 def embeddings_dataset(dataset, model, tokenizer):
 
     def compute_embeddings(example):
-        tokens = tokenizer(example['text'], return_tensors='pt')
+        tokens = tokenizer(example['text'], truncation=True, return_tensors='pt')
         input_ids = tokens['input_ids'].to(model.device)
         
         with torch.no_grad():

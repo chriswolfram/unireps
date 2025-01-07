@@ -34,4 +34,6 @@ if __name__ == "__main__":
 
     # openwebtext
     # the pile
+    # google/wit
+    
     # shuffling?

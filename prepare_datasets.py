@@ -72,7 +72,8 @@ def prepare_web_text(cache_dir, output_dir):
     if os.path.isdir(output_path):
         return
     
-    owt = datasets.load_dataset('Skylion007/openwebtext', split='train', cache_dir=cache_dir).shuffle().to_iterable_dataset().filter(lambda x: len(x['text']) < 10000).take(4096)
+    owt = datasets.load_dataset('Skylion007/openwebtext', split='train', cache_dir=cache_dir, trust_remote_code=True)
+    owt = owt.shuffle().to_iterable_dataset().filter(lambda x: len(x['text']) < 10000).take(4096)
     owt.save_to_disk(os.path.join(output_dir, 'web_text'))
 
 if __name__ == "__main__":

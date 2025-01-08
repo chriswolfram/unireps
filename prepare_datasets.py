@@ -11,7 +11,7 @@ def prepare_imdb(cache_dir, output_dir):
     if os.path.isdir(output_path):
         return
     
-    imdb = datasets.load_dataset('stanfordnlp/imdb', cache_dir=cache_dir).shuffle(seed=1234).take(4096)
+    imdb = datasets.load_dataset('stanfordnlp/imdb', split='test', cache_dir=cache_dir).shuffle(seed=1234).take(4096)
     imdb.save_to_disk(os.path.join(output_dir, 'imdb'))
 
 

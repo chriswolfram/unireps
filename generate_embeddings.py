@@ -84,6 +84,8 @@ if __name__ == "__main__":
 
         for dataset_name in dataset_names:
 
+            torch.cuda.empty_cache()
+
             output_path = os.path.join(output_dir, output_name(model_name, dataset_name))
             print('Generating:\t{}'.format(output_path))
 

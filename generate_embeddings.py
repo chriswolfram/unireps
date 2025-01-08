@@ -36,6 +36,10 @@ def embeddings_dataset(dataset, model, tokenizer):
     return embeddings
 
 
+def output_name(model_name, dataset_name):
+    return '{}---{}'.format(model_name.replace('/', '__'), dataset_name)
+
+
 if __name__ == "__main__":
      # Load command-line arguments
     model_list = sys.argv[1]
@@ -80,7 +84,7 @@ if __name__ == "__main__":
 
         for dataset_name in dataset_names:
 
-            output_path = os.path.join(output_dir, '{}---{}'.format(model_name.replace('/', '__'), dataset_name))
+            output_path = os.path.join(output_dir, output_name(model_name, dataset_name))
             print('Generating:\t{}'.format(output_path))
 
             if os.path.isdir(output_path):

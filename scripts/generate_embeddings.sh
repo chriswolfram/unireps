@@ -11,7 +11,7 @@
 #SBATCH --mail-type=END,FAIL
 
 # Monitor with
-# watch -n 1 "squeue -u chriswolfram && echo \"\n\n\" && cat logs/array_er309471_4294967294.out && echo \"\n\n\" && cat logs/array_er309471_4294967294.err | sed 's/\r/\n/g' | tail -n 10"
+# watch -n 1 "squeue -u chriswolfram && echo \"\n\n\" && cat logs/*.out && echo \"\n\n\" && cat logs/*.err | sed 's/\r/\n/g' | tail -n 10"
 
 UNIREPS_DIR="/home/chriswolfram/unireps"
 UNIREPS_HF_CACHE="/net/scratch2/chriswolfram/unireps/hf_cache"

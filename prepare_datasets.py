@@ -11,8 +11,7 @@ def prepare_imdb(cache_dir, output_dir):
     if os.path.isdir(output_path):
         return
     
-    # TODO: Remove unused columns?
-    imdb = datasets.load_dataset('stanfordnlp/imdb', split='train[:4096]', cache_dir=cache_dir)
+    imdb = datasets.load_dataset('stanfordnlp/imdb', cache_dir=cache_dir).shuffle(seed=1234).take(4096)
     imdb.save_to_disk(os.path.join(output_dir, 'imdb'))
 
 
@@ -43,12 +42,13 @@ def prepare_imdb_caesar(cache_dir, output_dir):
     if os.path.isdir(output_path):
         return
     
-    # TODO: Remove unused columns?
-    imdb = datasets.load_dataset('stanfordnlp/imdb', split='train[:4096]', cache_dir=cache_dir)
+    imdb = datasets.load_from_disk(os.path.join(output_dir, 'imdb'))
     cipher = make_cipher(imdb['text'])
     imdb_caesar = imdb.map(lambda x: {'text': apply_cipher(x['text'], cipher)})
     imdb_caesar.save_to_disk(os.path.join(output_dir, 'imdb_caesar'))
 
+
+# Random strings
 
 def prepare_random_strings(cache_dir, output_dir):
     output_path = os.path.join(output_dir, 'random')
@@ -63,6 +63,17 @@ def prepare_random_strings(cache_dir, output_dir):
 
     random_strings = datasets.Dataset.from_list(random_strings_list)
     random_strings.save_to_disk(os.path.join(output_dir, 'random_strings'))
+
+
+# Web text
+
+def prepare_web_text(cache_dir, output_dir):
+    output_path = os.path.join(output_dir, 'web_text')
+    if os.path.isdir(output_path):
+        return
+    
+    owt = datasets.load_dataset('Skylion007/openwebtext', split='train', cache_dir=cache_dir).shuffle().to_iterable_dataset().filter(lambda x: len(x['text']) < 10000).take(4096)
+    owt.save_to_disk(os.path.join(output_dir, 'web_text'))
 
 if __name__ == "__main__":
      # Load command-line arguments
@@ -88,10 +99,10 @@ if __name__ == "__main__":
     print("Preparing random strings")
     prepare_random_strings(cache_dir, datasets_dir)
 
-    # ds_streaming = datasets.load_dataset('stanfordnlp/imdb', split='train', streaming=True, cache_dir=cache_dir, trust_remote_code=False)
+    print("Preparing web text")
+    prepare_web_text(cache_dir, datasets_dir)
 
     # openwebtext
     # the pile
     # google/wit
-
-    # shuffling?
+    # tiiuae/falcon-refinedweb

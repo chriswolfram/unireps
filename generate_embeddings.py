@@ -6,11 +6,22 @@ import datasets
 import huggingface_hub
 
 
-def embeddings_dataset(dataset, model, tokenizer):
+force_no_chat_models = [
+    'tiiuae/falcon-11B',
+    'tiiuae/falcon-40b'
+]
+
+
+def embeddings_dataset(dataset, model, tokenizer, force_no_chat=False):
 
     def compute_embeddings(example):
-        tokens = tokenizer(example['text'], truncation=True, return_tensors='pt')
-        input_ids = tokens['input_ids'].to(model.device)
+        if tokenizer.chat_template is None or force_no_chat:
+            tokens = tokenizer(example['text'], truncation=True, return_tensors='pt')
+            input_ids = tokens['input_ids'].to(model.device)
+        else:
+            messages = [{'role': 'user', 'content': example['text']}]
+            input_ids = tokenizer.apply_chat_template(messages, add_generation_prompt=True, truncation=True, return_tensors='pt')
+            input_ids = input_ids.to(model.device)
         
         with torch.no_grad():
             model_out = model(input_ids=input_ids, output_hidden_states=True, use_cache=False)
@@ -81,28 +92,35 @@ if __name__ == "__main__":
         # Setup the scope for the model and tokenizer. They will only be loaded if they are needed
         tokenizer = None
         model = None
+        force_no_chat = False
 
         for dataset_name in dataset_names:
 
             torch.cuda.empty_cache()
 
             output_path = os.path.join(output_dir, output_name(model_name, dataset_name))
-            print('Generating:\t{}'.format(output_path))
+            print('Generating:\t', output_path)
 
             if os.path.isdir(output_path):
-                print('Output already exists (skipping):\t{}'.format(output_path))
+                print('Skipping:\t', output_path)
                 continue
 
             # Load the model and the tokenizer if needed
             if tokenizer is None and model is None:
-                print('Loading model:\t{}'.format(model_name))
+                print('Loading model:\t', model_name)
                 tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, device_map='auto', cache_dir=cache_dir)
                 model = transformers.AutoModelForCausalLM.from_pretrained(model_name, torch_dtype='auto', device_map='auto', cache_dir=cache_dir)
+
+                print('Chat model:\t', tokenizer.chat_template)
+                force_no_chat = False
+                if model_name in force_no_chat_models:
+                    force_no_chat = True
+                    print('Forcing no chat:\t', force_no_chat)
 
             # Load the dataset
             dataset = datasets.load_from_disk(os.path.join(dataset_dir, dataset_name))
 
             # Generate embeddings
-            embeddings = embeddings_dataset(dataset, model, tokenizer)
+            embeddings = embeddings_dataset(dataset, model, tokenizer, force_no_chat)
 
             embeddings.save_to_disk(output_path)

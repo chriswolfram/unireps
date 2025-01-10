@@ -12,7 +12,7 @@ def prepare_imdb(cache_dir, output_dir):
         return
     
     imdb = datasets.load_dataset('stanfordnlp/imdb', split='test', cache_dir=cache_dir).shuffle(seed=1234).take(4096)
-    imdb.save_to_disk(os.path.join(output_dir, 'imdb'))
+    imdb.save_to_disk(output_path)
 
 
 # Caesar ciphered IMDB
@@ -45,24 +45,25 @@ def prepare_imdb_caesar(cache_dir, output_dir):
     imdb = datasets.load_from_disk(os.path.join(output_dir, 'imdb'))
     cipher = make_cipher(imdb['text'])
     imdb_caesar = imdb.map(lambda x: {'text': apply_cipher(x['text'], cipher)})
-    imdb_caesar.save_to_disk(os.path.join(output_dir, 'imdb_caesar'))
+    imdb_caesar.save_to_disk(output_path)
 
 
 # Random strings
 
 def prepare_random_strings(cache_dir, output_dir):
-    output_path = os.path.join(output_dir, 'random')
+    output_path = os.path.join(output_dir, 'random_strings')
     if os.path.isdir(output_path):
         return
     
     chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?"
 
+    torch.manual_seed(1234)
     random_strings_list = []
     for _ in range(4096):
         random_strings_list.append({'text': ''.join([chars[i] for i in torch.randint(len(chars), (100,))])})
 
     random_strings = datasets.Dataset.from_list(random_strings_list)
-    random_strings.save_to_disk(os.path.join(output_dir, 'random_strings'))
+    random_strings.save_to_disk(output_path)
 
 
 # Web text
@@ -75,7 +76,31 @@ def prepare_web_text(cache_dir, output_dir):
     owt = datasets.load_dataset('Skylion007/openwebtext', split='train', cache_dir=cache_dir, trust_remote_code=True)
     owt = owt.shuffle(seed=1234).to_iterable_dataset().filter(lambda x: len(x['text']) < 10000).take(4096)
     owt = datasets.Dataset.from_list(list(owt))
-    owt.save_to_disk(os.path.join(output_dir, 'web_text'))
+    owt.save_to_disk(output_path)
+
+
+# Book translations
+
+def prepare_book_translations(cache_dir, output_dir):
+    output_path_en = os.path.join(output_dir, 'book_translations_en')
+    output_path_de = os.path.join(output_dir, 'book_translations_de')
+    if os.path.isdir(output_path_en) or os.path.isdir(output_path_de):
+        return
+    
+    books = datasets.load_dataset('Helsinki-NLP/opus_books', 'de-en', split='train', cache_dir=cache_dir).shuffle(seed=1234).take(2048)
+
+    en_list = []
+    de_list = []
+    for tr in books['translation']:
+        en_list.append({'text': tr['en']})
+        de_list.append({'text': tr['de']})
+
+    en_dataset = datasets.Dataset.from_list(en_list)
+    en_dataset.save_to_disk(output_path_en)
+
+    de_dataset = datasets.Dataset.from_list(de_list)
+    de_dataset.save_to_disk(output_path_de)
+
 
 if __name__ == "__main__":
      # Load command-line arguments
@@ -104,7 +129,5 @@ if __name__ == "__main__":
     print("Preparing web text")
     prepare_web_text(cache_dir, datasets_dir)
 
-    # openwebtext
-    # the pile
-    # google/wit
-    # tiiuae/falcon-refinedweb
+    print("Preparing book translations")
+    prepare_book_translations(cache_dir, datasets_dir)

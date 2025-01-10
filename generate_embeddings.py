@@ -1,27 +1,22 @@
 import sys
 import os
+import json
 import torch
 import transformers
 import datasets
 import huggingface_hub
 
 
-force_no_chat_models = [
-    'tiiuae/falcon-11B',
-    'tiiuae/falcon-40b'
-]
-
-
-def embeddings_dataset(dataset, model, tokenizer, force_no_chat=False):
+def embeddings_dataset(dataset, model, tokenizer, use_chat_template=False):
 
     def compute_embeddings(example):
-        if tokenizer.chat_template is None or force_no_chat:
-            tokens = tokenizer(example['text'], truncation=True, return_tensors='pt')
-            input_ids = tokens['input_ids'].to(model.device)
-        else:
+        if use_chat_template:
             messages = [{'role': 'user', 'content': example['text']}]
             input_ids = tokenizer.apply_chat_template(messages, add_generation_prompt=True, truncation=True, return_tensors='pt')
             input_ids = input_ids.to(model.device)
+        else:
+            tokens = tokenizer(example['text'], truncation=True, return_tensors='pt')
+            input_ids = tokens['input_ids'].to(model.device)
         
         with torch.no_grad():
             model_out = model(input_ids=input_ids, output_hidden_states=True, use_cache=False)
@@ -47,17 +42,21 @@ def embeddings_dataset(dataset, model, tokenizer, force_no_chat=False):
     return embeddings
 
 
-def output_name(model_name, dataset_name):
-    return '{}---{}'.format(model_name.replace('/', '__'), dataset_name)
+def output_name(model_name, dataset_name, use_chat_template):
+    model_label = model_name.replace('/', '__')
+
+    if use_chat_template:
+        model_label += "---chat"
+
+    return '{}---{}'.format(model_label, dataset_name)
 
 
 if __name__ == "__main__":
      # Load command-line arguments
-    model_list = sys.argv[1]
+    run_path = sys.argv[1]
     cache_dir = sys.argv[2]
-    dataset_list = sys.argv[3]
-    dataset_dir = sys.argv[4]
-    output_dir = sys.argv[5]
+    dataset_dir = sys.argv[3]
+    output_dir = sys.argv[4]
     
     # Authenticate for HF (just in case)
     huggingface_hub.login(new_session=False)
@@ -65,62 +64,57 @@ if __name__ == "__main__":
     # Disable caching because we don't need it and it causes performance problems with big models
     datasets.disable_caching()
 
-    # Get models
-    model_names = []
-    with open(model_list) as f:
-        for model_name_nl in f:
-            model_name = model_name_nl.rstrip()
-            model_names.append(model_name)
+    # Get models and datasets
+    with open(run_path) as f:
+        run_json = json.load(f)
 
-    # Get datasets
-    dataset_names = []
-    with open(dataset_list) as f:
-        for dataset_name_nl in f:
-            dataset_name = dataset_name_nl.rstrip()
-            dataset_names.append(dataset_name)
+    models_infos = run_json['models']
+    dataset_infos = run_json['datasets']
 
     print('Models:')
-    for m in model_names:
-        print("- {}".format(m))
+    for m in models_infos:
+        print("- {} (chat: {})".format(m['name'], m['chat']))
 
     print('Datasets:')
-    for d in dataset_names:
-        print("- {}".format(d))
+    for d in dataset_infos:
+        print("- {}".format(d['name']))
 
-    for model_name in model_names:
+    for model_info in models_infos:
+        model_name = model_info['name']
+        model_use_chat_template = model_info['chat']
+
+        chat_options = [False]
+        if model_use_chat_template:
+            chat_options.append(True)
 
         # Setup the scope for the model and tokenizer. They will only be loaded if they are needed
         tokenizer = None
         model = None
-        force_no_chat = False
 
-        for dataset_name in dataset_names:
+        for dataset_info in dataset_infos:
+            dataset_name = dataset_info['name']
 
-            torch.cuda.empty_cache()
+            for use_chat_template in chat_options:
 
-            output_path = os.path.join(output_dir, output_name(model_name, dataset_name))
-            print('Generating:\t', output_path)
+                torch.cuda.empty_cache()
 
-            if os.path.isdir(output_path):
-                print('Skipping:\t', output_path)
-                continue
+                output_path = os.path.join(output_dir, output_name(model_name, dataset_name, use_chat_template))
+                print('Generating:\t', output_path)
 
-            # Load the model and the tokenizer if needed
-            if tokenizer is None and model is None:
-                print('Loading model:\t', model_name)
-                tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, device_map='auto', cache_dir=cache_dir)
-                model = transformers.AutoModelForCausalLM.from_pretrained(model_name, torch_dtype='auto', device_map='auto', cache_dir=cache_dir)
+                if os.path.isdir(output_path):
+                    print('Skipping:\t', output_path)
+                    continue
 
-                print('Chat model:\t', tokenizer.chat_template is not None)
-                force_no_chat = False
-                if model_name in force_no_chat_models:
-                    force_no_chat = True
-                    print('Forcing no chat:\t', force_no_chat)
+                # Load the model and the tokenizer if needed
+                if tokenizer is None and model is None:
+                    print('Loading model:\t', model_name)
+                    tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, device_map='auto', cache_dir=cache_dir)
+                    model = transformers.AutoModelForCausalLM.from_pretrained(model_name, torch_dtype='auto', device_map='auto', cache_dir=cache_dir)
 
-            # Load the dataset
-            dataset = datasets.load_from_disk(os.path.join(dataset_dir, dataset_name))
+                # Load the dataset
+                dataset = datasets.load_from_disk(os.path.join(dataset_dir, dataset_name))
 
-            # Generate embeddings
-            embeddings = embeddings_dataset(dataset, model, tokenizer, force_no_chat)
+                # Generate embeddings
+                embeddings = embeddings_dataset(dataset, model, tokenizer, use_chat_template)
 
-            embeddings.save_to_disk(output_path)
+                embeddings.save_to_disk(output_path)

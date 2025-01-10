@@ -10,9 +10,6 @@
 #SBATCH --mail-user=chriswolfram@uchicago.edu
 #SBATCH --mail-type=END,FAIL
 
-# Monitor with
-# watch -n 1 "squeue -u chriswolfram && echo \"\n\n\" && cat logs/*.out && echo \"\n\n\" && cat logs/*.err | sed 's/\r/\n/g' | tail -n 10"
-
 UNIREPS_DIR="/home/chriswolfram/unireps"
 UNIREPS_HF_CACHE="/net/scratch2/chriswolfram/unireps/hf_cache"
 UNIREPS_DATASETS="/net/scratch2/chriswolfram/unireps/datasets"
@@ -20,4 +17,4 @@ UNIREPS_OUTPUTS="/net/scratch2/chriswolfram/unireps/outputs"
 
 UNIREPS_PYTHON="$UNIREPS_DIR/.venv/bin/python"
 
-$UNIREPS_PYTHON $UNIREPS_DIR/generate_embeddings.py $UNIREPS_DIR/models.txt $UNIREPS_HF_CACHE $UNIREPS_DIR/datasets.txt $UNIREPS_DATASETS $UNIREPS_OUTPUTS
+$UNIREPS_PYTHON $UNIREPS_DIR/generate_embeddings.py $UNIREPS_DIR/runs.txt $UNIREPS_HF_CACHE $UNIREPS_DATASETS $UNIREPS_OUTPUTS

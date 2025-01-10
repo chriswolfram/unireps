@@ -111,7 +111,7 @@ if __name__ == "__main__":
                 tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, device_map='auto', cache_dir=cache_dir)
                 model = transformers.AutoModelForCausalLM.from_pretrained(model_name, torch_dtype='auto', device_map='auto', cache_dir=cache_dir)
 
-                print('Chat model:\t', tokenizer.chat_template)
+                print('Chat model:\t', tokenizer.chat_template is not None)
                 force_no_chat = False
                 if model_name in force_no_chat_models:
                     force_no_chat = True

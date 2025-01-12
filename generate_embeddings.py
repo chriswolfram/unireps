@@ -67,7 +67,9 @@ if __name__ == "__main__":
     # Disable caching because we don't need it
     datasets.disable_caching()
 
+    print("Saving datasets...")
     unireps.save_datasets(datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)
+    print("Finished saving datasets")
 
     unireps.generate_embeddings(
         model_names,

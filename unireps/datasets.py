@@ -35,7 +35,7 @@ def _apply_cipher(t, cipher):
         out += cipher[c]
     return out
 
-def save_caesar(input_dataset_name, datasets_dir=None, hf_cache_dir=None):
+def save_caesar(input_dataset_name, seed=1234, datasets_dir=None, hf_cache_dir=None):
     datasets_dir, hf_cache_dir = _get_dirs(datasets_dir, hf_cache_dir)
 
     output_path = os.path.join(datasets_dir, input_dataset_name + '_caesar')
@@ -50,7 +50,7 @@ def save_caesar(input_dataset_name, datasets_dir=None, hf_cache_dir=None):
         raise ValueError(f"Dataset {input_dataset_name} not found in {datasets_dir}")
     
     input_dataset = datasets.load_from_disk(input_path)
-    cipher = _make_cipher(input_dataset['text'])
+    cipher = _make_cipher(input_dataset['text'], seed=seed)
     output_dataset = input_dataset.map(lambda x: {'text': _apply_cipher(x['text'], cipher)})
     output_dataset.save_to_disk(output_path)
 

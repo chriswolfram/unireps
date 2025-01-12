@@ -141,4 +141,4 @@ def save_datasets(n=2048, seed=1234, datasets_dir=None, hf_cache_dir=None):
     save_random_strings(n=n, seed=seed, datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)
     save_web_text(n=n, seed=seed, datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)
     save_book_translations(n=n, seed=seed, datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)
-    save_caesar('web_text', n=n, seed=seed, datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)
+    save_caesar('web_text', seed=seed, datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)

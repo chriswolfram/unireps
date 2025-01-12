@@ -6,7 +6,7 @@
 
 #SBATCH --partition=general
 #SBATCH --mem=80G
-#SBATCH --gres=gpu:h100:4
+#SBATCH --gres=gpu:a100:4
 #SBATCH --mail-user=chriswolfram@uchicago.edu
 #SBATCH --mail-type=END,FAIL
 
@@ -17,4 +17,4 @@ UNIREPS_OUTPUTS="/net/scratch2/chriswolfram/unireps/outputs"
 
 UNIREPS_PYTHON="$UNIREPS_DIR/.venv/bin/python"
 
-$UNIREPS_PYTHON $UNIREPS_DIR/generate_embeddings.py $UNIREPS_DIR/runs.json $UNIREPS_HF_CACHE $UNIREPS_DATASETS $UNIREPS_OUTPUTS
+$UNIREPS_PYTHON $UNIREPS_DIR/generate_embeddings.py $UNIREPS_HF_CACHE $UNIREPS_DATASETS $UNIREPS_OUTPUTS

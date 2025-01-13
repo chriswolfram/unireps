@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     dataset_names = [
         "web_text",
-        "web_text_caesar",
+        # "web_text_caesar",
         "imdb",
         "random_strings",
         "book_translations_en",

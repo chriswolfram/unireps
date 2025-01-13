@@ -6,7 +6,8 @@
 
 #SBATCH --partition=general
 #SBATCH --mem=80G
-#SBATCH --gres=gpu:h100:4
+#SBATCH --gres=gpu:4
+#SBATCH --constraint="a100|h100"
 #SBATCH --mail-user=chriswolfram@uchicago.edu
 #SBATCH --mail-type=END,FAIL
 

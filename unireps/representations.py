@@ -41,7 +41,8 @@ def embed_dataset(dataset, model, tokenizer, use_chat_template=False, text_key='
 
         return {
             'layer_last_embeddings': layer_last_embeddings,
-            'layer_mean_embeddings': layer_mean_embeddings
+            'layer_mean_embeddings': layer_mean_embeddings,
+            'at_max_length': input_ids.shape[1] >= tokenizer.model_max_length
         }
 
     # TODO: This currently sets new_fingerprint because otherwise `map` appears to hash compute_embeddings which includes the entire model!

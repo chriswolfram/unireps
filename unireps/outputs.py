@@ -1,8 +1,8 @@
 import os
 import transformers
 import datasets
-from .constants import *
-from .representations import *
+from . import constants
+from . import representations
 
 def embedding_output_name(model_name, dataset_name, use_chat_template=False):
     """
@@ -39,20 +39,21 @@ def embedding_output_path(model_name, dataset_name, use_chat_template=False, out
     """
     
     if outputs_dir is None:
-        outputs_dir = outputs_directory
+        print(constants.outputs_directory)
+        outputs_dir = constants.outputs_directory
 
     return os.path.join(outputs_dir, embedding_output_name(model_name, dataset_name, use_chat_template))
 
 
 def generate_embeddings(model_names, dataset_names, chat_models=[], datasets_dir=None, hf_cache_dir=None, outputs_dir=None, print_progress=True):
     if datasets_dir is None:
-        datasets_dir = datasets_directory
+        datasets_dir = constants.datasets_directory
 
     if hf_cache_dir is None:
-        hf_cache_dir = hf_cache_directory
+        hf_cache_dir = constants.hf_cache_directory
     
     if outputs_dir is None:
-        outputs_dir = outputs_directory
+        outputs_dir = constants.outputs_directory
 
 
     for model_name in model_names:
@@ -95,7 +96,7 @@ def generate_embeddings(model_names, dataset_names, chat_models=[], datasets_dir
                 dataset = datasets.load_from_disk(os.path.join(datasets_dir, dataset_name))
 
                 # Generate embeddings
-                embeddings = embed_dataset(dataset, model, tokenizer, use_chat_template)
+                embeddings = representations.embed_dataset(dataset, model, tokenizer, use_chat_template)
 
                 embeddings.save_to_disk(output_path)
     

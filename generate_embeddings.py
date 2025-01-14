@@ -8,8 +8,7 @@ if __name__ == "__main__":
      # Load command-line arguments
     hf_cache_dir = sys.argv[1]
     datasets_dir = sys.argv[2]
-    tmp_dir = sys.argv[3]
-    outputs_dir = sys.argv[4]
+    outputs_dir = sys.argv[3]
     
     unireps.hf_cache_directory = hf_cache_dir
     unireps.datasets_directory = datasets_dir
@@ -68,12 +67,6 @@ if __name__ == "__main__":
 
     # Disable caching because we don't need it
     datasets.disable_caching()
-
-    # Set TMP directory for datasets
-    if not os.path.isdir(tmp_dir):
-        os.makedirs(tmp_dir)
-        
-    os.environ["TMPDIR"] = tmp_dir
 
     print("Saving datasets...")
     unireps.save_datasets(datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)

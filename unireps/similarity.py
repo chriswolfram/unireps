@@ -1,3 +1,5 @@
+import torch
+
 def embs_knn(emb_mat, k):
     """
     Computes the k-nearest neighbors for each embedding in the given matrix using the dot product as the distance metric.

@@ -2,22 +2,10 @@ import os
 import transformers
 import datasets
 import torch
-from . import constants
+from . import paths
 from . import representations
 
-def embedding_output_name(model_name, dataset_name, use_chat_template=False):
-    """
-    Generate a standardized output name based on the model name and dataset name.
-
-    Args:
-        model_name (str): The name of the model, which may contain '/' characters.
-        dataset_name (str): The name of the dataset.
-        use_chat_template (bool, optional): If True, append "---chat" to the model label. Defaults to False.
-
-    Returns:
-        str: A standardized output name in the format 'model_label---dataset_name'.
-    """
-
+def get_dataset_name(model_name, dataset_name, use_chat_template=False):
     model_label = model_name.replace('/', '__')
 
     if use_chat_template:
@@ -25,36 +13,44 @@ def embedding_output_name(model_name, dataset_name, use_chat_template=False):
 
     return '{}---{}'.format(model_label, dataset_name)
 
-def embedding_output_path(model_name, dataset_name, use_chat_template=False, outputs_dir=None):
-    """
-    Generate the full output path for a given model and dataset.
-
-    Args:
-        model_name (str): The name of the model, which may contain '/' characters.
-        dataset_name (str): The name of the dataset.
-        use_chat_template (bool, optional): If True, append "---chat" to the model label. Defaults to False.
-        outputs_dir (str, optional): The directory where outputs are stored. If None, defaults to 'outputs_directory'.
-
-    Returns:
-        str: The full path to the output file.
-    """
-    
+def get_dataset_path(model_name, dataset_name, use_chat_template=False, outputs_dir=None):    
     if outputs_dir is None:
-        print(constants.outputs_directory)
-        outputs_dir = constants.outputs_directory
+        outputs_dir = paths.outputs_directory
 
-    return os.path.join(outputs_dir, embedding_output_name(model_name, dataset_name, use_chat_template))
+    return os.path.join(outputs_dir, get_dataset_name(model_name, dataset_name, use_chat_template))
+
+
+def get_dataset(model_name, dataset_name, use_chat_template=False, outputs_dir=None):
+    return datasets.load_from_disk(get_dataset_path(model_name, dataset_name, use_chat_template, outputs_dir))
+
+
+def dataset_embs(ds, layer=None, agg='last', normalize=True):
+    assert agg == 'last' or agg == 'mean'
+    if agg == 'last':
+        key = 'layer_last_embeddings'
+    elif agg == 'mean':
+        key = 'layer_mean_embeddings'
+
+    if layer is None:
+        embs = torch.stack([e[key] for e in ds]).permute(1,0,2)
+    else:
+        embs = torch.stack([e[key][layer] for e in ds])
+
+    if normalize:
+        embs = torch.nn.functional.normalize(embs, dim=-1)
+
+    return embs
 
 
 def generate_embeddings(model_names, dataset_names, chat_models=[], datasets_dir=None, hf_cache_dir=None, outputs_dir=None, print_progress=True):
     if datasets_dir is None:
-        datasets_dir = constants.datasets_directory
+        datasets_dir = paths.datasets_directory
 
     if hf_cache_dir is None:
-        hf_cache_dir = constants.hf_cache_directory
+        hf_cache_dir = paths.hf_cache_directory
     
     if outputs_dir is None:
-        outputs_dir = constants.outputs_directory
+        outputs_dir = paths.outputs_directory
 
 
     for model_name in model_names:
@@ -72,7 +68,7 @@ def generate_embeddings(model_names, dataset_names, chat_models=[], datasets_dir
 
                 torch.cuda.empty_cache()
 
-                output_path = embedding_output_path(model_name, dataset_name, use_chat_template, outputs_dir)
+                output_path = dataset_path(model_name, dataset_name, use_chat_template, outputs_dir)
 
                 if print_progress:
                     if use_chat_template:

@@ -1,14 +1,14 @@
 import os
 import datasets
 import torch
-from . import constants
+from . import paths
 
 def _get_dirs(datasets_dir, hf_cache_dir):
     if datasets_dir is None:
-        datasets_dir = constants.datasets_directory
+        datasets_dir = paths.datasets_directory
 
     if hf_cache_dir is None:
-        hf_cache_dir = constants.hf_cache_directory
+        hf_cache_dir = paths.hf_cache_directory
 
     return datasets_dir, hf_cache_dir
 

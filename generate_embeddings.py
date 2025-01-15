@@ -9,9 +9,9 @@ if __name__ == "__main__":
     datasets_dir = sys.argv[2]
     outputs_dir = sys.argv[3]
     
-    unireps.hf_cache_directory = hf_cache_dir
-    unireps.datasets_directory = datasets_dir
-    unireps.outputs_directory = outputs_dir
+    unireps.set_hf_cache_directory(hf_cache_dir)
+    unireps.set_datasets_directory(datasets_dir)
+    unireps.set_outputs_directory(outputs_dir)
     
     model_names = [
         "openai-community/gpt2",

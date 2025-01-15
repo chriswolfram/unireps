@@ -134,6 +134,27 @@ def save_book_translations(n=2048, seed=1234, datasets_dir=None, hf_cache_dir=No
     de_dataset.save_to_disk(output_path_de)
 
 
+def save_common_words(n=4096, datasets_dir=None):
+    datasets_dir, _ = _get_dirs(datasets_dir, None)
+
+    output_path = os.path.join(datasets_dir, 'common_words')
+    if os.path.isdir(output_path):
+        return
+    
+    if not os.path.isdir(datasets_dir):
+        os.makedirs(datasets_dir)
+
+    wordlist_path = os.path.join(os.path.dirname(__file__), 'google-10000-english.txt')
+    with open(wordlist_path) as f:
+        common_words = f.readlines()
+
+    common_words = [w.rstrip() for w in common_words]
+    common_words = common_words[:n]
+    
+    words = datasets.Dataset.from_list([{'text': w} for w in common_words])
+    words.save_to_disk(output_path)
+
+
 def save_datasets(n=2048, seed=1234, datasets_dir=None, hf_cache_dir=None):
     datasets_dir, hf_cache_dir = _get_dirs(datasets_dir, hf_cache_dir)
 
@@ -141,4 +162,5 @@ def save_datasets(n=2048, seed=1234, datasets_dir=None, hf_cache_dir=None):
     save_random_strings(n=n, seed=seed, datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)
     save_web_text(n=n, seed=seed, datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)
     save_book_translations(n=n, seed=seed, datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)
+    save_common_words(n=n, datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)
     save_caesar('web_text', seed=seed, datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)

@@ -58,7 +58,8 @@ if __name__ == "__main__":
         "imdb",
         "random_strings",
         "book_translations_en",
-        "book_translations_de"
+        "book_translations_de",
+        "common_words"
     ]
 
     # Authenticate for HF

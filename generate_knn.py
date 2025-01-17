@@ -79,7 +79,7 @@ if __name__ == "__main__":
         if model_name in chat_models:
             chat_options.append(True)
                 
-        for use_chat_template in chat_models:
+        for use_chat_template in chat_options:
             for dataset_name in dataset_names:
                 print('Generating', unireps.get_dataset_name(model_name, dataset_name, use_chat_template))
                 output_path = os.path.join(knn_dir, unireps.get_dataset_name(model_name, dataset_name, use_chat_template))

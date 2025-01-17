@@ -68,7 +68,7 @@ def generate_embeddings(model_names, dataset_names, chat_models=[], datasets_dir
 
                 torch.cuda.empty_cache()
 
-                output_path = dataset_path(model_name, dataset_name, use_chat_template, outputs_dir)
+                output_path = get_dataset_path(model_name, dataset_name, use_chat_template, outputs_dir)
 
                 if print_progress:
                     if use_chat_template:

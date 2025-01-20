@@ -16,4 +16,6 @@ def layer_by_layer_plot(layer_similarity_mat, model_1='', model_2='', show_max=F
     if show_max:
         ax.plot(range(layer_similarity_mat.shape[1]), layer_similarity_mat.max(dim=0).indices, c='red')
 
+    ax.invert_yaxis()
+
     return fig

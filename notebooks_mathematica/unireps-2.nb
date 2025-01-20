@@ -1,0 +1,90 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[      2550,         82]
+NotebookOptionsPosition[      1808,         60]
+NotebookOutlinePosition[      2206,         76]
+CellTagsIndexPosition[      2163,         73]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$HistoryLength", "=", "0"}], ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->"In[1]:=",ExpressionUUID->"39ab41d7-9c72-4fd4-8842-9d0bfcf57978"],
+
+Cell[CellGroupData[{
+
+Cell["Initialization", "Section",ExpressionUUID->"56bb39e2-66d3-467f-88b2-95649c2f7c81"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"projectDirectory", "=", "\"\<~/Documents/unireps\>\""}], 
+  ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->"In[6]:=",ExpressionUUID->"43d95e2a-758b-4ac6-ae19-c86e51bc200e"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"datasetsDirectory", "=", 
+   RowBox[{"FileNameJoin", "[", 
+    RowBox[{"{", 
+     RowBox[{"projectDirectory", ",", "\"\<datasets\>\""}], "}"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"outputsDirectory", "=", 
+   RowBox[{"FileNameJoin", "[", 
+    RowBox[{"{", 
+     RowBox[{"projectDirectory", ",", "\"\<outputs\>\""}], "}"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"knnDirectory", "=", 
+   RowBox[{"FileNameJoin", "[", 
+    RowBox[{"{", 
+     RowBox[{"projectDirectory", ",", "\"\<knn\>\""}], "}"}], "]"}]}], 
+  ";"}]}], "Input",
+ InitializationCell->True,
+ CellLabel->"In[7]:=",ExpressionUUID->"1e60d42c-edf1-446c-b454-353a34d79b69"]
+}, Open  ]]
+},
+WindowSize->{808, 911},
+WindowMargins->{{377, Automatic}, {Automatic, 39}},
+FrontEndVersion->"14.2 for Mac OS X ARM (64-bit) (December 26, 2024)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"e7c0704b-eb66-44d3-ac06-4556484ab86b"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[554, 20, 185, 4, 45, "Input",ExpressionUUID->"39ab41d7-9c72-4fd4-8842-9d0bfcf57978",
+ InitializationCell->True],
+Cell[CellGroupData[{
+Cell[764, 28, 88, 0, 66, "Section",ExpressionUUID->"56bb39e2-66d3-467f-88b2-95649c2f7c81"],
+Cell[855, 30, 216, 5, 45, "Input",ExpressionUUID->"43d95e2a-758b-4ac6-ae19-c86e51bc200e",
+ InitializationCell->True],
+Cell[1074, 37, 718, 20, 86, "Input",ExpressionUUID->"1e60d42c-edf1-446c-b454-353a34d79b69",
+ InitializationCell->True]
+}, Open  ]]
+}
+]
+*)
+

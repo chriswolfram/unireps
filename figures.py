@@ -38,6 +38,7 @@ if not os.path.exists(output_path):
     knn_2 = model_dataset_knn("google/gemma-2-9b", "web_text")
     mknn = unireps.mutual_knn(knn_1, knn_2)
     unireps.layer_by_layer_plot(mknn[1:,1:], model_1="layer of google/gemma-2-9b", model_2="layer of meta-llama/Meta-Llama-3.1-8B")
+    plt.tight_layout()
     plt.savefig(output_path, transparent=True, format='pdf')
 
 
@@ -48,4 +49,5 @@ if not os.path.exists(output_path):
     knn_2 = model_dataset_knn("google/gemma-2-9b", "random_strings")
     mknn = unireps.mutual_knn(knn_1, knn_2)
     unireps.layer_by_layer_plot(mknn[1:,1:], model_1="layer of google/gemma-2-9b", model_2="layer of meta-llama/Meta-Llama-3.1-8B")
+    plt.tight_layout()
     plt.savefig(output_path, transparent=True, format='pdf')

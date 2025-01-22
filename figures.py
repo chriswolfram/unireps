@@ -31,7 +31,17 @@ def model_dataset_knn(model, dataset, use_chat_template=False, normalize=True, a
 
 ##### Figure 1 #####
 
-output_name = 'figure_1a.pdf'
+output_name = 'web_text_symmetric_affinity.pdf'
+output_path = os.path.join(figure_directory, output_name)
+if not os.path.exists(output_path):
+    knn_1 = model_dataset_knn("meta-llama/Meta-Llama-3.1-8B", "web_text")
+    mknn = unireps.mutual_knn(knn_1, knn_1)
+    unireps.layer_by_layer_plot(mknn[1:,1:], model_1="layer of meta-llama/Meta-Llama-3.1-8B", model_2="layer of meta-llama/Meta-Llama-3.1-8B")
+    plt.tight_layout()
+    plt.savefig(output_path, transparent=True, format='pdf')
+
+
+output_name = 'web_text_affinity.pdf'
 output_path = os.path.join(figure_directory, output_name)
 if not os.path.exists(output_path):
     knn_1 = model_dataset_knn("meta-llama/Meta-Llama-3.1-8B", "web_text")
@@ -42,7 +52,7 @@ if not os.path.exists(output_path):
     plt.savefig(output_path, transparent=True, format='pdf')
 
 
-output_name = 'figure_1b.pdf'
+output_name = 'random_strings_affinity.pdf'
 output_path = os.path.join(figure_directory, output_name)
 if not os.path.exists(output_path):
     knn_1 = model_dataset_knn("meta-llama/Meta-Llama-3.1-8B", "random_strings")

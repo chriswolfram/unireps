@@ -6,10 +6,9 @@ def layer_by_layer_plot(layer_similarity_mat, model_1='', model_2='', show_max=F
     fig = plt.figure()
     ax = fig.add_subplot()
 
-    cax = ax.matshow(layer_similarity_mat, vmin=0, vmax=1)
+    cax = ax.imshow(layer_similarity_mat, vmin=0, vmax=1, interpolation="nearest", aspect='equal')
     fig.colorbar(cax, fraction=0.025)
     
-    ax.xaxis.set_label_position('top')
     ax.set_xlabel(model_2)
     ax.set_ylabel(model_1)
 

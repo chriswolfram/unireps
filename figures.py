@@ -36,7 +36,7 @@ output_path = os.path.join(figure_directory, output_name)
 if not os.path.exists(output_path):
     knn_1 = model_dataset_knn("meta-llama/Meta-Llama-3.1-8B", "web_text")
     mknn = unireps.mutual_knn(knn_1, knn_1)
-    unireps.layer_by_layer_plot(mknn[1:,1:], model_1="layer of meta-llama/Meta-Llama-3.1-8B", model_2="layer of meta-llama/Meta-Llama-3.1-8B")
+    unireps.layer_by_layer_plot(mknn[1:,1:], x_label="layer of meta-llama/Meta-Llama-3.1-8B", y_label="layer of meta-llama/Meta-Llama-3.1-8B")
     plt.tight_layout()
     plt.savefig(output_path, transparent=True, format='pdf')
 
@@ -47,7 +47,7 @@ if not os.path.exists(output_path):
     knn_1 = model_dataset_knn("meta-llama/Meta-Llama-3.1-8B", "web_text")
     knn_2 = model_dataset_knn("google/gemma-2-9b", "web_text")
     mknn = unireps.mutual_knn(knn_1, knn_2)
-    unireps.layer_by_layer_plot(mknn[1:,1:], model_1="layer of google/gemma-2-9b", model_2="layer of meta-llama/Meta-Llama-3.1-8B")
+    unireps.layer_by_layer_plot(mknn[1:,1:], x_label="layer of google/gemma-2-9b", y_label="layer of meta-llama/Meta-Llama-3.1-8B")
     plt.tight_layout()
     plt.savefig(output_path, transparent=True, format='pdf')
 
@@ -58,6 +58,6 @@ if not os.path.exists(output_path):
     knn_1 = model_dataset_knn("meta-llama/Meta-Llama-3.1-8B", "random_strings")
     knn_2 = model_dataset_knn("google/gemma-2-9b", "random_strings")
     mknn = unireps.mutual_knn(knn_1, knn_2)
-    unireps.layer_by_layer_plot(mknn[1:,1:], model_1="layer of google/gemma-2-9b", model_2="layer of meta-llama/Meta-Llama-3.1-8B")
+    unireps.layer_by_layer_plot(mknn[1:,1:], x_label="layer of google/gemma-2-9b", y_label="layer of meta-llama/Meta-Llama-3.1-8B")
     plt.tight_layout()
     plt.savefig(output_path, transparent=True, format='pdf')

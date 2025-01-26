@@ -7,7 +7,7 @@ def layer_by_layer_plot(layer_similarity_mat, x_label='', y_label='', show_max=F
     ax = fig.add_subplot()
 
     cax = ax.imshow(layer_similarity_mat, vmin=0, vmax=1, interpolation="nearest", aspect='equal')
-    fig.colorbar(cax, fraction=0.025)
+    fig.colorbar(cax, fraction=0.02)
     
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)

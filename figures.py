@@ -28,36 +28,29 @@ def model_dataset_knn(model, dataset, use_chat_template=False, normalize=True, a
     knn = unireps.embs_knn(unireps.dataset_embs(ds, layer=None, agg=agg, normalize=normalize), k=k)
     return knn
 
+def affinity_matrix_plot(output_name, model_1, model_2, dataset):
+    print('Generating', output_name)
+    output_path = os.path.join(figure_directory, output_name)
+    if not os.path.exists(output_path):
+        knn_1 = model_dataset_knn(model_2, dataset)
+        knn_2 = model_dataset_knn(model_1, dataset)
+        mknn = unireps.mutual_knn(knn_1, knn_2)
+        unireps.layer_by_layer_plot(mknn[1:,1:], x_label=model_1, y_label=model_2)
+        plt.tight_layout()
+        plt.savefig(output_path, transparent=True, format='pdf')
+
 
 ##### Figure 1 #####
 
-output_name = 'web_text_symmetric_affinity.pdf'
-output_path = os.path.join(figure_directory, output_name)
-if not os.path.exists(output_path):
-    knn_1 = model_dataset_knn("meta-llama/Meta-Llama-3.1-8B", "web_text")
-    mknn = unireps.mutual_knn(knn_1, knn_1)
-    unireps.layer_by_layer_plot(mknn[1:,1:], x_label="layer of meta-llama/Meta-Llama-3.1-8B", y_label="layer of meta-llama/Meta-Llama-3.1-8B")
-    plt.tight_layout()
-    plt.savefig(output_path, transparent=True, format='pdf')
+affinity_matrix_plot('web_text_affinity.pdf', "google/gemma-2-9b", "meta-llama/Meta-Llama-3.1-8B", 'web_text')
+affinity_matrix_plot('random_strings_affinity.pdf', "google/gemma-2-9b", "meta-llama/Meta-Llama-3.1-8B", 'random_strings')
 
+##### Figure 2 #####
 
-output_name = 'web_text_affinity.pdf'
-output_path = os.path.join(figure_directory, output_name)
-if not os.path.exists(output_path):
-    knn_1 = model_dataset_knn("meta-llama/Meta-Llama-3.1-8B", "web_text")
-    knn_2 = model_dataset_knn("google/gemma-2-9b", "web_text")
-    mknn = unireps.mutual_knn(knn_1, knn_2)
-    unireps.layer_by_layer_plot(mknn[1:,1:], x_label="layer of google/gemma-2-9b", y_label="layer of meta-llama/Meta-Llama-3.1-8B")
-    plt.tight_layout()
-    plt.savefig(output_path, transparent=True, format='pdf')
+affinity_matrix_plot('web_text_llama_mistral_affinity.pdf', "meta-llama/Llama-3.1-70B", "mistralai/Mistral-7B-v0.3", 'web_text')
+affinity_matrix_plot('web_text_falcon_gemma_affinity.pdf', "tiiuae/falcon-40b", "google/gemma-2-27b", 'web_text')
+affinity_matrix_plot('web_text_mistral_gemma_affinity.pdf', "mistralai/Mistral-7B-v0.3", "google/gemma-2-2b", 'web_text')
 
+##### Other #####
 
-output_name = 'random_strings_affinity.pdf'
-output_path = os.path.join(figure_directory, output_name)
-if not os.path.exists(output_path):
-    knn_1 = model_dataset_knn("meta-llama/Meta-Llama-3.1-8B", "random_strings")
-    knn_2 = model_dataset_knn("google/gemma-2-9b", "random_strings")
-    mknn = unireps.mutual_knn(knn_1, knn_2)
-    unireps.layer_by_layer_plot(mknn[1:,1:], x_label="layer of google/gemma-2-9b", y_label="layer of meta-llama/Meta-Llama-3.1-8B")
-    plt.tight_layout()
-    plt.savefig(output_path, transparent=True, format='pdf')
+affinity_matrix_plot('web_text_symmetric_affinity.pdf', "meta-llama/Meta-Llama-3.1-8B", "meta-llama/Meta-Llama-3.1-8B", 'web_text')

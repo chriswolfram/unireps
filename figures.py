@@ -35,7 +35,7 @@ def affinity_matrix_plot(output_name, model_1, model_2, dataset):
         knn_1 = model_dataset_knn(model_2, dataset)
         knn_2 = model_dataset_knn(model_1, dataset)
         mknn = unireps.mutual_knn(knn_1, knn_2)
-        unireps.layer_by_layer_plot(mknn[1:,1:], x_label=model_1, y_label=model_2)
+        unireps.layer_by_layer_plot(mknn[1:,1:], x_label='layer of ' + model_1, y_label='layer of ' + model_2)
         plt.tight_layout()
         plt.savefig(output_path, transparent=True, format='pdf')
 

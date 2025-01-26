@@ -45,11 +45,17 @@ def affinity_matrix_plot(output_name, model_1, model_2, dataset):
 affinity_matrix_plot('web_text_affinity.pdf', "google/gemma-2-9b", "meta-llama/Meta-Llama-3.1-8B", 'web_text')
 affinity_matrix_plot('random_strings_affinity.pdf', "google/gemma-2-9b", "meta-llama/Meta-Llama-3.1-8B", 'random_strings')
 
-##### Figure 2 #####
+##### Appendix figures #####
 
+### Zoo on web text
 affinity_matrix_plot('web_text_llama_mistral_affinity.pdf', "meta-llama/Llama-3.1-70B", "mistralai/Mistral-7B-v0.3", 'web_text')
 affinity_matrix_plot('web_text_falcon_gemma_affinity.pdf', "tiiuae/falcon-40b", "google/gemma-2-27b", 'web_text')
 affinity_matrix_plot('web_text_mistral_gemma_affinity.pdf', "mistralai/Mistral-7B-v0.3", "google/gemma-2-2b", 'web_text')
+
+### Zoo on random strings
+affinity_matrix_plot('random_strings_llama_mistral_affinity.pdf', "meta-llama/Llama-3.1-70B", "mistralai/Mistral-7B-v0.3", 'random_strings')
+affinity_matrix_plot('random_strings_falcon_gemma_affinity.pdf', "tiiuae/falcon-40b", "google/gemma-2-27b", 'random_strings')
+affinity_matrix_plot('random_strings_mistral_gemma_affinity.pdf', "mistralai/Mistral-7B-v0.3", "google/gemma-2-2b", 'random_strings')
 
 ##### Other #####
 

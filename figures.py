@@ -45,6 +45,16 @@ def affinity_matrix_plot(output_name, model_1, model_2, dataset):
 affinity_matrix_plot('web_text_affinity.pdf', "google/gemma-2-9b", "meta-llama/Meta-Llama-3.1-8B", 'web_text')
 affinity_matrix_plot('random_strings_affinity.pdf', "google/gemma-2-9b", "meta-llama/Meta-Llama-3.1-8B", 'random_strings')
 
+##### Figure 2 #####
+
+affinity_matrix_plot('web_text_instruction_tuning.pdf', "meta-llama/Llama-3.1-70B-Instruct", "meta-llama/Llama-3.1-70B", 'web_text')
+affinity_matrix_plot('ifeval_instruction_tuning.pdf', "meta-llama/Llama-3.1-70B-Instruct", "meta-llama/Llama-3.1-70B", 'ifeval')
+
+affinity_matrix_plot('web_text_gemma_instruction_tuning.pdf', "google/gemma-2-9b-it", "google/gemma-2-9b", 'web_text')
+affinity_matrix_plot('ifeval_gemma_instruction_tuning.pdf', "google/gemma-2-9b-it", "google/gemma-2-9b", 'ifeval')
+
+affinity_matrix_plot('random_strings_instruction_tuning.pdf', "meta-llama/Llama-3.1-70B-Instruct", "meta-llama/Llama-3.1-70B", 'random_strings')
+
 ##### Appendix figures #####
 
 ### Zoo on web text

@@ -104,14 +104,14 @@ if __name__ == "__main__":
         mat_path = os.path.join(fig_dir, 'big_mat_{}.pdf'.format(dataset))
         if not os.path.exists(mat_path):
             mknn_path = os.path.join(fig_cache_dir, 'mknn_{}.pickle'.format(dataset))
-            mknns = generate_all_mknn_cached(mknn_path, model_names, 'web_text')
+            mknns = generate_all_mknn_cached(mknn_path, model_names, dataset)
 
             save_big_mat(mat_path, mat_model_names, mknns)
 
         mat_path = os.path.join(fig_dir, 'mega_mat_{}.pdf'.format(dataset))
         if not os.path.exists(mat_path):
             mknn_path = os.path.join(fig_cache_dir, 'mknn_{}.pickle'.format(dataset))
-            mknns = generate_all_mknn_cached(mknn_path, model_names, 'web_text')
+            mknns = generate_all_mknn_cached(mknn_path, model_names, dataset)
 
             save_big_mat(mat_path, model_names, mknns)
 

@@ -16,7 +16,7 @@ def knn_mat(emb_mat, k=None):
 
 
 if __name__ == "__main__":
-     # Load command-line arguments
+    # Load command-line arguments
     hf_cache_dir = sys.argv[1]
     datasets_dir = sys.argv[2]
     outputs_dir = sys.argv[3]

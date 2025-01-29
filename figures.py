@@ -123,6 +123,7 @@ if __name__ == "__main__":
         "tiiuae/falcon-11B",
         "tiiuae/falcon-mamba-7b"
     ]
+    model_names.reverse()
 
     mat_model_names = [
         # "openai-community/gpt2",
@@ -151,6 +152,7 @@ if __name__ == "__main__":
         # "tiiuae/falcon-11B",
         "tiiuae/falcon-mamba-7b"
     ]
+    mat_model_names.reverse()
 
     make_big_mats(model_names, mat_model_names, 'web_text')
     make_big_mats(model_names, mat_model_names, 'random_strings')

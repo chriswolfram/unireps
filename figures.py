@@ -76,29 +76,6 @@ if __name__ == "__main__":
             return mknns[(m1,m2)][1:,1:]
         else:
             return mknns[(m2,m1)][1:,1:].T
-        
-    def save_big_mat(path, mat_model_names, mknns):
-        big_mat = torch.cat([torch.cat([get_from_all_mknn(mknns, m1, m2).T for m2 in mat_model_names]).T for m1 in mat_model_names])
-        model_layers = np.array([get_from_all_mknn(mknns, m, mat_model_names[0]).shape[0] for m in mat_model_names])
-        tick_positions = model_layers.cumsum()
-        tick_positions = np.insert(tick_positions, 0, 0)
-        tick_positions = (tick_positions[1:] + tick_positions[:-1])/2
-
-        fig = plt.figure(figsize=(15,15))
-        ax = fig.add_subplot()
-
-        cax = ax.imshow(big_mat, vmin=0, vmax=1, interpolation="nearest", aspect='equal')
-        # fig.colorbar(cax, fraction=0.02)
-
-        ax.xaxis.set_tick_params(rotation=90)
-
-        ax.xaxis.set_ticks(tick_positions, mat_model_names)
-        ax.yaxis.set_ticks(tick_positions, mat_model_names)
-
-        ax.invert_yaxis()
-
-        plt.tight_layout()
-        plt.savefig(path, transparent=True, format='pdf')
 
     def make_big_mats(model_names, mat_model_names, dataset):
         mat_path = os.path.join(fig_dir, 'big_mat_{}.pdf'.format(dataset))
@@ -106,14 +83,18 @@ if __name__ == "__main__":
             mknn_path = os.path.join(fig_cache_dir, 'mknn_{}.pickle'.format(dataset))
             mknns = generate_all_mknn_cached(mknn_path, model_names, dataset)
 
-            save_big_mat(mat_path, mat_model_names, mknns)
+            unireps.big_mat_plot(mknns, mat_model_names, tick_spacing=15, rotate_model_names=True, figsize=(10,10))
+            plt.tight_layout()
+            plt.savefig(mat_path, transparent=True, format='pdf')
 
         mat_path = os.path.join(fig_dir, 'mega_mat_{}.pdf'.format(dataset))
         if not os.path.exists(mat_path):
             mknn_path = os.path.join(fig_cache_dir, 'mknn_{}.pickle'.format(dataset))
             mknns = generate_all_mknn_cached(mknn_path, model_names, dataset)
 
-            save_big_mat(mat_path, model_names, mknns)
+            unireps.big_mat_plot(mknns, model_names, tick_spacing=10000, rotate_model_names=True, figsize=(15,15))
+            plt.tight_layout()
+            plt.savefig(mat_path, transparent=True, format='pdf')
 
     model_names = [
         "openai-community/gpt2",
@@ -145,8 +126,8 @@ if __name__ == "__main__":
 
     mat_model_names = [
         # "openai-community/gpt2",
-        "google/gemma-2b",
-        "google/gemma-7b",
+        # "google/gemma-2b",
+        # "google/gemma-7b",
         "google/gemma-2-2b",
         "google/gemma-2-9b",
         # "google/gemma-2-9b-it",
@@ -156,26 +137,26 @@ if __name__ == "__main__":
         "meta-llama/Llama-3.2-1B",
         "meta-llama/Llama-3.2-3B",
         # "meta-llama/Llama-3.2-3B-Instruct",
-        "meta-llama/Llama-3.2-11B-Vision",
+        # "meta-llama/Llama-3.2-11B-Vision",
         "meta-llama/Llama-3.1-70B",
         # "meta-llama/Llama-3.1-70B-Instruct",
         # "meta-llama/Llama-3.3-70B-Instruct",
         "mistralai/Mistral-7B-v0.3",
         "mistralai/Mistral-Nemo-Base-2407",
-        "mistralai/Mixtral-8x7B-v0.1",
+        # "mistralai/Mixtral-8x7B-v0.1",
         # "microsoft/Phi-3-mini-4k-instruct",
         # "microsoft/Phi-3-medium-4k-instruct",
         # "microsoft/Phi-3.5-mini-instruct",
         "tiiuae/falcon-40b",
-        "tiiuae/falcon-11B",
-        # "tiiuae/falcon-mamba-7b"
+        # "tiiuae/falcon-11B",
+        "tiiuae/falcon-mamba-7b"
     ]
 
     make_big_mats(model_names, mat_model_names, 'web_text')
     make_big_mats(model_names, mat_model_names, 'random_strings')
     make_big_mats(model_names, mat_model_names, 'book_translations_en')
     make_big_mats(model_names, mat_model_names, 'book_translations_de')
-    make_big_mats(model_names, mat_model_names, 'imdb')
+    # make_big_mats(model_names, mat_model_names, 'imdb')
 
 
     ##### Affinity plots #####

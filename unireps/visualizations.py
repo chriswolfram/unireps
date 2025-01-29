@@ -28,7 +28,7 @@ def get_from_all_mknn(mknns, m1, m2):
     else:
         return mknns[(m2,m1)][1:,1:].T
 
-def big_mat_plot(mknns, mat_model_names, tick_spacing=10, invert_yaxis=False, rotate_model_names=True, figsize=(10,10)):
+def big_mat_plot(mknns, mat_model_names, tick_spacing=10, invert_yaxis=True, rotate_model_names=True, figsize=(10,10)):
     big_mat = torch.cat([torch.cat([get_from_all_mknn(mknns, m1, m2).T for m2 in mat_model_names]).T for m1 in mat_model_names])
     big_mat = np.ma.array(big_mat, mask=np.tri(big_mat.shape[0], big_mat.shape[1], k=0).T)
 
@@ -45,8 +45,9 @@ def big_mat_plot(mknns, mat_model_names, tick_spacing=10, invert_yaxis=False, ro
     tick_labels = np.array([], dtype=np.int64)
     depth = 0
     for d in model_layers:
-        tick_positions = np.concatenate((tick_positions, np.arange(tick_spacing, d, tick_spacing) + depth))
-        tick_labels = np.concatenate((tick_labels, np.arange(tick_spacing, d, tick_spacing)))
+        layers = np.arange(tick_spacing, d-tick_spacing, tick_spacing)
+        tick_positions = np.concatenate((tick_positions, layers + depth))
+        tick_labels = np.concatenate((tick_labels, layers))
         depth += d
 
     ax.xaxis.set_ticks(tick_positions, tick_labels)

@@ -174,6 +174,8 @@ if __name__ == "__main__":
     make_big_mats(model_names, mat_model_names, 'web_text')
     make_big_mats(model_names, mat_model_names, 'random_strings')
     make_big_mats(model_names, mat_model_names, 'book_translations_en')
+    make_big_mats(model_names, mat_model_names, 'book_translations_de')
+    make_big_mats(model_names, mat_model_names, 'imdb')
 
 
     ##### Affinity plots #####

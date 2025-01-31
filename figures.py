@@ -207,7 +207,7 @@ if __name__ == "__main__":
         out = {k: v[1:,1:] for k,v in out.items()}
         return out
 
-    output_path = os.path.join(fig_dir, 'triple_unit_plot.png')
+    output_path = os.path.join(fig_dir, 'triple_unit_plot.pdf')
     if not os.path.exists(output_path):    
         mknns_web_text = clean_up_mknns(generate_all_mknn_cached(os.path.join(fig_cache_dir, 'mknn_web_text_web_text.pickle'), model_names, 'web_text', 'web_text'))
         mknns_random_strings = clean_up_mknns(generate_all_mknn_cached(os.path.join(fig_cache_dir, 'mknn_random_strings_random_strings.pickle'), model_names, 'random_strings', 'random_strings'))
@@ -234,7 +234,7 @@ if __name__ == "__main__":
         cbar = fig.colorbar(im, ax=axs.ravel().tolist(), label='mean similarity')
 
         # plt.tight_layout()
-        plt.savefig(output_path, transparent=True, format='png', dpi=300)
+        plt.savefig(output_path, transparent=True, dpi=200, format='pdf', bbox_inches='tight', pad_inches=0)
 
 
     ##### Affinity plots #####

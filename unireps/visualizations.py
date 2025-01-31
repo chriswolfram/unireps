@@ -33,7 +33,7 @@ def get_from_all_mknn(mknns, m1, m2):
 
 def big_mat_plot(mknns, mat_model_names, tick_spacing=10, invert_yaxis=True, rotate_model_names=True, figsize=(10,10), cmap='inferno'):
     big_mat = torch.cat([torch.cat([get_from_all_mknn(mknns, m1, m2).T for m2 in mat_model_names]).T for m1 in mat_model_names])
-    big_mat = np.ma.array(big_mat, mask=np.tri(big_mat.shape[0], big_mat.shape[1], k=0).T)
+    # big_mat = np.ma.array(big_mat, mask=np.tri(big_mat.shape[0], big_mat.shape[1], k=0).T)
 
     model_layers = np.array([get_from_all_mknn(mknns, m, mat_model_names[0]).shape[0] for m in mat_model_names])
 

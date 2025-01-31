@@ -3,6 +3,7 @@ import sys
 
 import unireps
 import numpy as np
+import scipy
 import torch
 import pickle
 import datasets
@@ -42,30 +43,35 @@ if __name__ == "__main__":
         ds.set_format('torch')
         return ds['knn'][:,:,:k].permute(1,0,2)
 
-    def generate_all_mknn(model_names, dataset_name, k=10):
-        model_knns = {}
+    def generate_all_mknn(model_names, dataset_name_1, dataset_name_2, k=10):
+        print("Generating mknn for:", dataset_name_1, dataset_name_2)
+        model_knns_1 = {}
         for m in tqdm(model_names):
-            model_knns[m] = get_layer_knn(m, dataset_name, k=k)
+            model_knns_1[m] = get_layer_knn(m, dataset_name_1, k=k)
+
+        model_knns_2 = {}
+        for m in tqdm(model_names):
+            model_knns_2[m] = get_layer_knn(m, dataset_name_2, k=k)
 
         model_model_mknn = {}
         for i in tqdm(range(len(model_names))):
             for j in range(i+1):
                 m1 = model_names[i]
                 m2 = model_names[j]
-                knn_1 = model_knns[m1]
-                knn_2 = model_knns[m2]
+                knn_1 = model_knns_1[m1]
+                knn_2 = model_knns_2[m2]
                 mknn = unireps.mutual_knn(knn_1, knn_2)
 
                 model_model_mknn[(m1,m2)] = mknn
 
         return model_model_mknn
 
-    def generate_all_mknn_cached(path, model_names, dataset_name, k=10):
+    def generate_all_mknn_cached(path, model_names, dataset_name_1, dataset_name_2, k=10):
         if os.path.exists(path):
             with open(path, 'rb') as f:
                 mknns = pickle.load(f)
         else:
-            mknns = generate_all_mknn(model_names, dataset_name, k=k)
+            mknns = generate_all_mknn(model_names, dataset_name_1, dataset_name_2, k=k)
             with open(path, 'wb') as f:
                 pickle.dump(mknns, f)
 
@@ -77,27 +83,28 @@ if __name__ == "__main__":
         else:
             return mknns[(m2,m1)][1:,1:].T
 
-    def make_big_mats(model_names, mat_model_names, dataset, cache_suffix='', k=10):
-        mat_path = os.path.join(fig_dir, 'big_mat_{}{}.pdf'.format(dataset, cache_suffix))
+    def make_big_mats(model_names, mat_model_names, dataset_1, dataset_2, cache_suffix='', k=10):
+        mat_path = os.path.join(fig_dir, 'big_mat_{}_{}{}.pdf'.format(dataset_1, dataset_2, cache_suffix))
+        print("Making big mat:", mat_path)
         if not os.path.exists(mat_path):
-            mknn_path = os.path.join(fig_cache_dir, 'mknn_{}{}.pickle'.format(dataset, cache_suffix))
-            mknns = generate_all_mknn_cached(mknn_path, model_names, dataset, k=k)
+            mknn_path = os.path.join(fig_cache_dir, 'mknn_{}_{}{}.pickle'.format(dataset_1, dataset_2, cache_suffix))
+            mknns = generate_all_mknn_cached(mknn_path, model_names, dataset_1, dataset_2, k=k)
 
             unireps.big_mat_plot(mknns, mat_model_names, tick_spacing=15, rotate_model_names=True, figsize=(10,10))
             plt.tight_layout()
             plt.savefig(mat_path, transparent=True, format='pdf')
 
-        mat_path = os.path.join(fig_dir, 'mega_mat_{}{}.pdf'.format(dataset, cache_suffix))
+        mat_path = os.path.join(fig_dir, 'mega_mat_{}_{}{}.pdf'.format(dataset_1, dataset_2, cache_suffix))
         if not os.path.exists(mat_path):
-            mknn_path = os.path.join(fig_cache_dir, 'mknn_{}{}.pickle'.format(dataset, cache_suffix))
-            mknns = generate_all_mknn_cached(mknn_path, model_names, dataset, k=k)
+            mknn_path = os.path.join(fig_cache_dir, 'mknn_{}_{}{}.pickle'.format(dataset_1, dataset_2, cache_suffix))
+            mknns = generate_all_mknn_cached(mknn_path, model_names, dataset_1, dataset_2, k=k)
 
             unireps.big_mat_plot(mknns, model_names, tick_spacing=10000, rotate_model_names=True, figsize=(15,15))
             plt.tight_layout()
             plt.savefig(mat_path, transparent=True, format='pdf')
 
     model_names = [
-        "openai-community/gpt2",
+        # "openai-community/gpt2",
         "google/gemma-2b",
         "google/gemma-7b",
         "google/gemma-2-2b",
@@ -154,16 +161,80 @@ if __name__ == "__main__":
     ]
     mat_model_names.reverse()
 
-    make_big_mats(model_names, mat_model_names, 'web_text')
-    make_big_mats(model_names, mat_model_names, 'random_strings')
-    make_big_mats(model_names, mat_model_names, 'book_translations_en')
-    make_big_mats(model_names, mat_model_names, 'book_translations_de')
-    make_big_mats(model_names, mat_model_names, 'imdb')
-    make_big_mats(model_names, mat_model_names, 'ifeval')
-    make_big_mats(model_names, mat_model_names, 'mmlu')
+    make_big_mats(model_names, mat_model_names, 'web_text', 'web_text')
+    make_big_mats(model_names, mat_model_names, 'random_strings', 'random_strings')
+    make_big_mats(model_names, mat_model_names, 'book_translations_en', 'book_translations_en')
+    make_big_mats(model_names, mat_model_names, 'book_translations_de', 'book_translations_de')
+    make_big_mats(model_names, mat_model_names, 'imdb', 'imdb')
+    make_big_mats(model_names, mat_model_names, 'ifeval', 'ifeval')
+    make_big_mats(model_names, mat_model_names, 'mmlu', 'mmlu')
 
-    make_big_mats(model_names, mat_model_names, 'web_text', k=1, cache_suffix='_k1')
-    make_big_mats(model_names, mat_model_names, 'web_text', k=100, cache_suffix='_k100')
+    # make_big_mats(model_names, mat_model_names, 'book_translations_en', 'book_translations_de')
+    # make_big_mats(model_names, mat_model_names, 'book_translations_de', 'book_translations_en')
+
+    make_big_mats(model_names, mat_model_names, 'web_text', 'web_text', k=1, cache_suffix='_k1')
+    # make_big_mats(model_names, mat_model_names, 'web_text', 'web_text', k=100, cache_suffix='_k100')
+
+
+    ##### Unit square plots #####
+
+    def unit_square_mat(mknns, bins=40):
+        x = []
+        y = []
+        z = []
+        for _, mknn_raw in list(mknns.items()):
+            for mknn in [mknn_raw, mknn_raw.T]:
+                coords = torch.stack(torch.meshgrid(torch.linspace(0,1,mknn.shape[0]), torch.linspace(0,1,mknn.shape[1]), indexing='ij'), dim=-1).flatten(end_dim=1)
+                x.append(coords[:,0])
+                y.append(coords[:,1])
+                z.append(mknn.flatten())
+
+        x = torch.cat(x)
+        y = torch.cat(y)
+        z = torch.cat(z)
+
+
+        stat, _, _, _ = scipy.stats.binned_statistic_2d(x, y, z, statistic='mean', bins=bins)
+
+        return stat
+
+    def clean_up_mknns(mknns):
+        out = mknns
+        for k in list(out.keys()):
+            if "openai-community/gpt2" in k or k[0] == k[1]:
+                del out[k]
+
+        out = {k: v[1:,1:] for k,v in out.items()}
+        return out
+
+    output_path = os.path.join(fig_dir, 'triple_unit_plot.png')
+    if not os.path.exists(output_path):    
+        mknns_web_text = clean_up_mknns(generate_all_mknn_cached(os.path.join(fig_cache_dir, 'mknn_web_text_web_text.pickle'), model_names, 'web_text', 'web_text'))
+        mknns_random_strings = clean_up_mknns(generate_all_mknn_cached(os.path.join(fig_cache_dir, 'mknn_random_strings_random_strings.pickle'), model_names, 'random_strings', 'random_strings'))
+        mknns_ifeval = clean_up_mknns(generate_all_mknn_cached(os.path.join(fig_cache_dir, 'mknn_ifeval_ifeval.pickle'), model_names, 'ifeval', 'ifeval'))
+
+        fig, axs = plt.subplots(1, 3, figsize=(12, 4), sharey=True)
+        vmax = 0.65
+
+        axs[0].imshow(unit_square_mat(mknns_web_text, bins=40).T, origin='lower', extent=[0,1,0,1], vmin=0, vmax=vmax, cmap='inferno')
+        axs[0].set_aspect('equal')
+        axs[0].set_xlabel('proportional depth in model 1')
+        axs[0].set_ylabel('proportional depth in model 2')
+
+        axs[1].imshow(unit_square_mat(mknns_random_strings, bins=40).T, origin='lower', extent=[0,1,0,1], vmin=0, vmax=vmax, cmap='inferno')
+        axs[1].set_aspect('equal')
+        axs[1].set_xlabel('proportional depth in model 1')
+        # axs[1].set_ylabel('proportional depth in model 2')
+
+        im = axs[2].imshow(unit_square_mat(mknns_ifeval, bins=40).T, origin='lower', extent=[0,1,0,1], vmin=0, vmax=vmax, cmap='inferno')
+        axs[2].set_aspect('equal')
+        axs[2].set_xlabel('proportional depth in model 1')
+        # axs[2].set_ylabel('proportional depth in model 2')
+
+        cbar = fig.colorbar(im, ax=axs.ravel().tolist(), label='mean similarity')
+
+        # plt.tight_layout()
+        plt.savefig(output_path, transparent=True, format='png', dpi=300)
 
 
     ##### Affinity plots #####

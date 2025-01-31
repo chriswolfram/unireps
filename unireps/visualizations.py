@@ -4,11 +4,14 @@ import torch
 from . import outputs
 from . import similarity
 
-def layer_by_layer_plot(layer_similarity_mat, x_label='', y_label='', show_max=False):
+def model_display_name(model_name):
+    return model_name.split('/')[-1]
+
+def layer_by_layer_plot(layer_similarity_mat, x_label='', y_label='', show_max=False, cmap='inferno'):
     fig = plt.figure()
     ax = fig.add_subplot()
 
-    cax = ax.imshow(layer_similarity_mat, vmin=0, vmax=1, interpolation="nearest", aspect='equal')
+    cax = ax.imshow(layer_similarity_mat, vmin=0, vmax=1, interpolation="nearest", aspect='equal', cmap=cmap)
     fig.colorbar(cax, fraction=0.02)
     
     ax.set_xlabel(x_label)
@@ -28,7 +31,7 @@ def get_from_all_mknn(mknns, m1, m2):
     else:
         return mknns[(m2,m1)][1:,1:].T
 
-def big_mat_plot(mknns, mat_model_names, tick_spacing=10, invert_yaxis=True, rotate_model_names=True, figsize=(10,10)):
+def big_mat_plot(mknns, mat_model_names, tick_spacing=10, invert_yaxis=True, rotate_model_names=True, figsize=(10,10), cmap='inferno'):
     big_mat = torch.cat([torch.cat([get_from_all_mknn(mknns, m1, m2).T for m2 in mat_model_names]).T for m1 in mat_model_names])
     big_mat = np.ma.array(big_mat, mask=np.tri(big_mat.shape[0], big_mat.shape[1], k=0).T)
 
@@ -37,7 +40,7 @@ def big_mat_plot(mknns, mat_model_names, tick_spacing=10, invert_yaxis=True, rot
     fig = plt.figure(figsize=figsize)
     ax = fig.add_subplot()
 
-    cax = ax.imshow(big_mat, vmin=0, vmax=1, interpolation="nearest", aspect='equal')
+    cax = ax.imshow(big_mat, vmin=0, vmax=1, interpolation="nearest", aspect='equal', cmap=cmap)
     # fig.colorbar(cax, fraction=0.02)
 
     # Layer ticks
@@ -58,12 +61,14 @@ def big_mat_plot(mknns, mat_model_names, tick_spacing=10, invert_yaxis=True, rot
     model_tick_positions = np.insert(model_tick_positions, 0, 0)
     model_tick_positions = (model_tick_positions[1:] + model_tick_positions[:-1])/2
 
+    display_model_names = [model_display_name(n) for n in mat_model_names]
+
     if invert_yaxis:
         sec = ax.secondary_xaxis(location='top')
     else:
         sec = ax.secondary_xaxis(location=0)
 
-    sec.xaxis.set_ticks(model_tick_positions, mat_model_names)
+    sec.xaxis.set_ticks(model_tick_positions, display_model_names)
 
     if rotate_model_names:
         sec.tick_params('x', length=20, width=0, rotation=90)
@@ -71,7 +76,7 @@ def big_mat_plot(mknns, mat_model_names, tick_spacing=10, invert_yaxis=True, rot
         sec.tick_params('x', length=20, width=0, rotation=0)
 
     secy = ax.secondary_yaxis(location=0)
-    secy.yaxis.set_ticks(model_tick_positions, mat_model_names)
+    secy.yaxis.set_ticks(model_tick_positions, display_model_names)
 
     if rotate_model_names:
         secy.tick_params('y', length=20, width=0, rotation=0)

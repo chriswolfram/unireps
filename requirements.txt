@@ -4,8 +4,8 @@ sentencepiece
 protobuf
 accelerate
 huggingface_hub
-tqdm
-
 datasets
+tqdm
+scipy
 matplotlib
 jupyter

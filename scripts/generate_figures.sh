@@ -5,7 +5,7 @@
 #SBATCH --time=12:00:00
 
 #SBATCH --partition=general
-#SBATCH --mem=32GB
+#SBATCH --mem=64GB
 #SBATCH --cpus-per-task 8
 #SBATCH --mail-user=chriswolfram@uchicago.edu
 #SBATCH --mail-type=END,FAIL

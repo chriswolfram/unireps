@@ -101,7 +101,7 @@ if __name__ == "__main__":
 
             unireps.big_mat_plot(mknns, model_names, tick_spacing=10000, rotate_model_names=True, figsize=(15,15))
             plt.tight_layout()
-            plt.savefig(mat_path, transparent=True, format='pdf')
+            plt.savefig(mat_path, transparent=True, format='pdf', bbox_inches='tight', pad_inches=0)
 
     model_names = [
         # "openai-community/gpt2",
@@ -257,7 +257,7 @@ if __name__ == "__main__":
             mknn = unireps.mutual_knn(knn_1, knn_2)
             unireps.layer_by_layer_plot(mknn[1:,1:], x_label='layer of ' + model_1, y_label='layer of ' + model_2)
             plt.tight_layout()
-            plt.savefig(output_path, transparent=True, format='pdf')
+            plt.savefig(output_path, transparent=True, format='pdf', bbox_inches='tight', pad_inches=0)
 
 
     ##### Figure 1 #####

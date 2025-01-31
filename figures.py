@@ -42,10 +42,10 @@ if __name__ == "__main__":
         ds.set_format('torch')
         return ds['knn'][:,:,:k].permute(1,0,2)
 
-    def generate_all_mknn(model_names, dataset_name):
+    def generate_all_mknn(model_names, dataset_name, k=10):
         model_knns = {}
         for m in tqdm(model_names):
-            model_knns[m] = get_layer_knn(m, dataset_name)
+            model_knns[m] = get_layer_knn(m, dataset_name, k=k)
 
         model_model_mknn = {}
         for i in tqdm(range(len(model_names))):
@@ -60,12 +60,12 @@ if __name__ == "__main__":
 
         return model_model_mknn
 
-    def generate_all_mknn_cached(path, model_names, dataset_name):
+    def generate_all_mknn_cached(path, model_names, dataset_name, k=10):
         if os.path.exists(path):
             with open(path, 'rb') as f:
                 mknns = pickle.load(f)
         else:
-            mknns = generate_all_mknn(model_names, dataset_name)
+            mknns = generate_all_mknn(model_names, dataset_name, k=k)
             with open(path, 'wb') as f:
                 pickle.dump(mknns, f)
 
@@ -77,20 +77,20 @@ if __name__ == "__main__":
         else:
             return mknns[(m2,m1)][1:,1:].T
 
-    def make_big_mats(model_names, mat_model_names, dataset):
-        mat_path = os.path.join(fig_dir, 'big_mat_{}.pdf'.format(dataset))
+    def make_big_mats(model_names, mat_model_names, dataset, cache_suffix='', k=10):
+        mat_path = os.path.join(fig_dir, 'big_mat_{}{}.pdf'.format(dataset, cache_suffix))
         if not os.path.exists(mat_path):
-            mknn_path = os.path.join(fig_cache_dir, 'mknn_{}.pickle'.format(dataset))
-            mknns = generate_all_mknn_cached(mknn_path, model_names, dataset)
+            mknn_path = os.path.join(fig_cache_dir, 'mknn_{}{}.pickle'.format(dataset, cache_suffix))
+            mknns = generate_all_mknn_cached(mknn_path, model_names, dataset, k=k)
 
             unireps.big_mat_plot(mknns, mat_model_names, tick_spacing=15, rotate_model_names=True, figsize=(10,10))
             plt.tight_layout()
             plt.savefig(mat_path, transparent=True, format='pdf')
 
-        mat_path = os.path.join(fig_dir, 'mega_mat_{}.pdf'.format(dataset))
+        mat_path = os.path.join(fig_dir, 'mega_mat_{}{}.pdf'.format(dataset, cache_suffix))
         if not os.path.exists(mat_path):
-            mknn_path = os.path.join(fig_cache_dir, 'mknn_{}.pickle'.format(dataset))
-            mknns = generate_all_mknn_cached(mknn_path, model_names, dataset)
+            mknn_path = os.path.join(fig_cache_dir, 'mknn_{}{}.pickle'.format(dataset, cache_suffix))
+            mknns = generate_all_mknn_cached(mknn_path, model_names, dataset, k=k)
 
             unireps.big_mat_plot(mknns, model_names, tick_spacing=10000, rotate_model_names=True, figsize=(15,15))
             plt.tight_layout()
@@ -161,6 +161,9 @@ if __name__ == "__main__":
     make_big_mats(model_names, mat_model_names, 'imdb')
     make_big_mats(model_names, mat_model_names, 'ifeval')
     make_big_mats(model_names, mat_model_names, 'mmlu')
+
+    make_big_mats(model_names, mat_model_names, 'web_text', k=1, cache_suffix='_k1')
+    make_big_mats(model_names, mat_model_names, 'web_text', k=100, cache_suffix='_k100')
 
 
     ##### Affinity plots #####

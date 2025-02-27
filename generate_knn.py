@@ -74,7 +74,8 @@ if __name__ == "__main__":
         "book_translations_de",
         "common_words",
         "ifeval",
-        "mmlu"
+        "mmlu",
+        "wikipedia"
     ]
 
     for model_name in model_names:

@@ -1,0 +1,162 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[      5404,        154]
+NotebookOptionsPosition[      3989,        122]
+NotebookOutlinePosition[      4386,        138]
+CellTagsIndexPosition[      4343,        135]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{"Length", "@", 
+  RowBox[{"WikipediaData", "[", 
+   RowBox[{
+    RowBox[{"\"\<Category\>\"", "->", "\"\<Good articles\>\""}], 
+    ",", "\"\<CategoryMembers\>\""}], "]"}]}]], "Input",
+ CellLabel->"In[24]:=",ExpressionUUID->"3ec695cb-d994-4d16-998f-d63a54fc85e7"],
+
+Cell[BoxData["41237"], "Output",
+ CellLabel->"Out[24]=",ExpressionUUID->"05c107cf-d908-4c0b-86fb-993b96f3da15"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Length", "@", 
+  RowBox[{"WikipediaData", "[", 
+   RowBox[{
+    RowBox[{"\"\<Category\>\"", "->", "\"\<Featured articles\>\""}], 
+    ",", "\"\<CategoryMembers\>\""}], "]"}]}]], "Input",
+ CellLabel->"In[23]:=",ExpressionUUID->"503250f9-97e3-4106-8a31-5b68e83ce8ff"],
+
+Cell[BoxData["6700"], "Output",
+ CellLabel->"Out[23]=",ExpressionUUID->"63ac82d1-e540-4167-89c4-4a3738e80e0a"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"featuredArticles", "=", 
+   RowBox[{"WikipediaData", "[", 
+    RowBox[{
+     RowBox[{"\"\<Category\>\"", "->", "\"\<Featured articles\>\""}], 
+     ",", "\"\<CategoryMembers\>\""}], "]"}]}], ";"}]], "Input",
+ CellLabel->"In[25]:=",ExpressionUUID->"1c4808a9-a545-4eb1-bcf8-53bd7472cee3"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"articleFirstParagraph", "[", "art_", "]"}], ":=", 
+  RowBox[{"First", "@", 
+   RowBox[{"Discard", "[", 
+    RowBox[{
+     RowBox[{"StringSplit", "[", 
+      RowBox[{
+       RowBox[{"WikipediaData", "[", "art", "]"}], ",", "\"\<\\n\>\""}], 
+      "]"}], ",", 
+     RowBox[{"StringMatchQ", "[", 
+      RowBox[{"WhitespaceCharacter", "..."}], "]"}]}], "]"}]}]}]], "Input",
+ CellLabel->"In[29]:=",ExpressionUUID->"71b919a6-d73a-4e2d-8f22-e9fd13ad6417"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"LaunchKernels", "[", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"firstParagraphs", "=", 
+    RowBox[{"ParallelMap", "[", 
+     RowBox[{"articleFirstParagraph", ",", "featuredArticles"}], "]"}]}], 
+   ";"}], "//", "EchoTiming"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"CloseKernels", "[", "]"}], ";"}]}], "Input",
+ CellLabel->"In[35]:=",ExpressionUUID->"04cd67e0-0ea8-487d-8b09-6382fd02b8a6"],
+
+Cell[BoxData["228.72996`"], "EchoTiming",ExpressionUUID->"352ce6d7-6eb5-4f30-bd90-81da0d59d81d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FileNameJoin", "[", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"ParentDirectory", "@", 
+     RowBox[{"NotebookDirectory", "[", "]"}]}], ",", "\"\<unireps\>\"", 
+    ",", "\"\<data\>\"", ",", "\"\<featured-wikipedia.txt\>\""}], "}"}], 
+  "]"}]], "Input",
+ CellLabel->"In[42]:=",ExpressionUUID->"5b60e0ec-0cbe-4590-ae68-eed072f33de0"],
+
+Cell[BoxData["\<\"/Users/christopher/git/unireps/unireps/data/featured-\
+wikipedia.txt\"\>"], "Output",
+ CellLabel->"Out[42]=",ExpressionUUID->"d6de0aa4-d1d7-4d00-8b3f-d1b67b7b9c36"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Export", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"FileNameJoin", "[", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"ParentDirectory", "@", 
+        RowBox[{"NotebookDirectory", "[", "]"}]}], ",", "\"\<unireps\>\"", 
+       ",", "\"\<data\>\"", ",", "\"\<featured-wikipedia.txt\>\""}], "}"}], 
+     "]"}], ",", "\[IndentingNewLine]", 
+    RowBox[{"StringRiffle", "[", 
+     RowBox[{"firstParagraphs", ",", "\"\<\\n\>\""}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}], ";"}]], "Input",ExpressionUUID->"3ca74db9-\
+942b-49d2-83f1-60f2e53dce71"]
+},
+WindowSize->{808, 911},
+WindowMargins->{{44, Automatic}, {36, Automatic}},
+FrontEndVersion->"14.3 for Mac OS X ARM (64-bit) (February 10, 2025)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"03e6eac5-408f-4463-81b4-0fe7994a2819"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[576, 22, 285, 6, 29, "Input",ExpressionUUID->"3ec695cb-d994-4d16-998f-d63a54fc85e7"],
+Cell[864, 30, 111, 1, 33, "Output",ExpressionUUID->"05c107cf-d908-4c0b-86fb-993b96f3da15"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1012, 36, 289, 6, 29, "Input",ExpressionUUID->"503250f9-97e3-4106-8a31-5b68e83ce8ff"],
+Cell[1304, 44, 110, 1, 33, "Output",ExpressionUUID->"63ac82d1-e540-4167-89c4-4a3738e80e0a"]
+}, Open  ]],
+Cell[1429, 48, 321, 7, 29, "Input",ExpressionUUID->"1c4808a9-a545-4eb1-bcf8-53bd7472cee3"],
+Cell[1753, 57, 483, 12, 70, "Input",ExpressionUUID->"71b919a6-d73a-4e2d-8f22-e9fd13ad6417"],
+Cell[CellGroupData[{
+Cell[2261, 73, 443, 11, 70, "Input",ExpressionUUID->"04cd67e0-0ea8-487d-8b09-6382fd02b8a6"],
+Cell[2707, 86, 96, 0, 23, "EchoTiming",ExpressionUUID->"352ce6d7-6eb5-4f30-bd90-81da0d59d81d"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2840, 91, 354, 8, 49, "Input",ExpressionUUID->"5b60e0ec-0cbe-4590-ae68-eed072f33de0"],
+Cell[3197, 101, 182, 2, 33, "Output",ExpressionUUID->"d6de0aa4-d1d7-4d00-8b3f-d1b67b7b9c36"]
+}, Open  ]],
+Cell[3394, 106, 591, 14, 111, "Input",ExpressionUUID->"3ca74db9-942b-49d2-83f1-60f2e53dce71"]
+}
+]
+*)
+

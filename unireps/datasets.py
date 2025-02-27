@@ -144,7 +144,7 @@ def save_common_words(n=4096, datasets_dir=None):
     if not os.path.isdir(datasets_dir):
         os.makedirs(datasets_dir)
 
-    wordlist_path = os.path.join(os.path.dirname(__file__), 'google-10000-english.txt')
+    wordlist_path = os.path.join(os.path.dirname(__file__), 'data', 'google-10000-english.txt')
     with open(wordlist_path) as f:
         common_words = f.readlines()
 
@@ -186,6 +186,29 @@ def save_mmlu(n=2048, seed=1234, datasets_dir=None, hf_cache_dir=None):
     mmlu.save_to_disk(output_path)
 
 
+def save_wikipedia(n=2048, seed=1234, datasets_dir=None):
+    datasets_dir, _ = _get_dirs(datasets_dir, None)
+
+    output_path = os.path.join(datasets_dir, 'wikipedia')
+    if os.path.isdir(output_path):
+        return
+    
+    if not os.path.isdir(datasets_dir):
+        os.makedirs(datasets_dir)
+
+    wikipedia_path = os.path.join(os.path.dirname(__file__), 'data', 'featured-wikipedia.txt')
+    with open(wikipedia_path) as f:
+        wikipedia = f.readlines()
+
+    wikipedia = [w.rstrip() for w in wikipedia]
+    
+    torch.manual_seed(seed)
+    perm = torch.randperm(len(wikipedia))[:n]
+    
+    texts = datasets.Dataset.from_list([{'text': wikipedia[i]} for i in perm])
+    texts.save_to_disk(output_path)
+
+
 def save_datasets(n=2048, seed=1234, datasets_dir=None, hf_cache_dir=None):
     datasets_dir, hf_cache_dir = _get_dirs(datasets_dir, hf_cache_dir)
 
@@ -197,3 +220,4 @@ def save_datasets(n=2048, seed=1234, datasets_dir=None, hf_cache_dir=None):
     save_ifeval(datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)
     save_mmlu(n=n, seed=seed, datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)
     save_caesar('web_text', seed=seed, datasets_dir=datasets_dir, hf_cache_dir=hf_cache_dir)
+    save_wikipedia(n=n, seed=seed, datasets_dir=datasets_dir)

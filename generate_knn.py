@@ -6,11 +6,12 @@ import unireps
 
 
 def knn_mat(emb_mat, k=None):
-    if k is None:
-        k = gram.shape[0]-1
-    
     gram = emb_mat @ emb_mat.T
     gram.fill_diagonal_(-torch.inf)
+
+    if k is None:
+        k = gram.shape[0]-1
+
     nn = gram.argsort(descending=True)[:,:k]
     return nn
 

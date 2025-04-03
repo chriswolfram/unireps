@@ -93,7 +93,7 @@ if __name__ == "__main__":
                 if use_chat_template:
                     model_short_name += '-with-chat-template'
 
-                ds.push_to_hub('chriswolfram/'+model_short_name, dataset_name)
-                
+                ds.push_to_hub('chriswolfram/embeddings-'+model_short_name, dataset_name)
+
                 # To avoid rate limits
-                time.sleep(1)
+                time.sleep(3)

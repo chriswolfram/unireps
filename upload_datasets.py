@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 import huggingface_hub
 import datasets
 import unireps
@@ -93,3 +94,6 @@ if __name__ == "__main__":
                     model_short_name += '-with-chat-template'
 
                 ds.push_to_hub('chriswolfram/'+model_short_name, dataset_name)
+                
+                # To avoid rate limits
+                time.sleep(1)

@@ -94,15 +94,23 @@ if __name__ == "__main__":
 
                 subset_name = model_short_name + '---' + dataset_name
 
+                # Upload embeddings
                 ds = unireps.get_dataset(model_name, dataset_name, use_chat_template)
                 ds.push_to_hub('chriswolfram/embeddings', subset_name)
 
                 # To avoid rate limits
                 time.sleep(3)
 
-                # knn_path = os.path.join(knn_dir, unireps.get_dataset_name(model_name, dataset_name, use_chat_template)) + '.parquet'
-                # ds = datasets.load_dataset('knn', data_files=knn_path)
-                # ds.push_to_hub('chriswolfram/knn', subset_name)
 
-                # # To avoid rate limits
-                # time.sleep(3)
+                # Upload knn
+                knn_path = os.path.join(knn_dir, unireps.get_dataset_name(model_name, dataset_name, use_chat_template)) + '.parquet'
+
+                if not os.path.exists(knn_path):
+                    print('KNN does not exist. Skipping...')
+                    continue
+
+                ds = datasets.Dataset.from_parquet(knn_path)
+                ds.push_to_hub('chriswolfram/knn', subset_name)
+
+                # To avoid rate limits
+                time.sleep(3)

@@ -100,7 +100,8 @@ if __name__ == "__main__":
                 # To avoid rate limits
                 time.sleep(3)
 
-                ds = datasets.load_from_disk(os.path.join(knn_dir, unireps.get_dataset_name(model_name, dataset_name, use_chat_template)) + '.parquet')
+                knn_path = os.path.join(knn_dir, unireps.get_dataset_name(model_name, dataset_name, use_chat_template)) + '.parquet'
+                ds = datasets.load_dataset('knn', data_files=knn_path)
                 ds.push_to_hub('chriswolfram/knn', subset_name)
 
                 # To avoid rate limits

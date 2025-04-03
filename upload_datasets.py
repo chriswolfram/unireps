@@ -10,6 +10,7 @@ if __name__ == "__main__":
     hf_cache_dir = sys.argv[1]
     datasets_dir = sys.argv[2]
     outputs_dir = sys.argv[3]
+    knn_dir = sys.argv[4]
     
     unireps.set_hf_cache_directory(hf_cache_dir)
     unireps.set_datasets_directory(datasets_dir)
@@ -86,14 +87,19 @@ if __name__ == "__main__":
                 if not os.path.isdir(unireps.get_dataset_path(model_name, dataset_name, use_chat_template)):
                     print('Dataset does not exist. Skipping...')
                     continue
-                
-                ds = unireps.get_dataset(model_name, dataset_name, use_chat_template)
 
                 model_short_name = model_name.split('/')[-1]
                 if use_chat_template:
                     model_short_name += '-with-chat-template'
 
-                ds.push_to_hub('chriswolfram/embeddings-'+model_short_name, dataset_name)
+                ds = unireps.get_dataset(model_name, dataset_name, use_chat_template)
+                ds.push_to_hub('chriswolfram/embeddings', model_short_name + '---' + dataset_name)
+
+                # To avoid rate limits
+                time.sleep(3)
+
+                ds = datasets.load_dataset(os.path.join(knn_dir, unireps.get_dataset_name(model_name, dataset_name, use_chat_template)) + '.parquet')
+                ds.push_to_hub('chriswolfram/knn', model_short_name + '---' + dataset_name)
 
                 # To avoid rate limits
                 time.sleep(3)
